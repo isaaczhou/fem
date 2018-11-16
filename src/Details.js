@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import pf from "petfinder-client";
 import { navigate } from "@reach/router";
+import Carousel from "./Carousel";
 
 const petfinder = pf({
   key: process.env.API_KEY,
@@ -46,8 +47,9 @@ export default class Details extends Component {
 
     return (
       <div className="details">
+        <Carousel media={media} />
         <div>
-          <img src={media.photos.photo[2].value} alt={name} />
+          <img src={media.photos.photo[0].value} alt={name} />
           <h1>{name}</h1>
           <h2>
             {animal} - {breed} - {location}
