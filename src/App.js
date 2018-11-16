@@ -1,10 +1,11 @@
 import React from "react";
 import { render } from "react-dom";
-import { Router, Link } from "@reach/router";
+import { Router } from "@reach/router";
 import pf from "petfinder-client";
 import { Provider } from "./SearchContext";
 import Results from "./Results";
 import Details from "./Details";
+import NavBar from "./NavBar";
 import SearchParams from "./SearchParams";
 
 const petfinder = pf({
@@ -69,14 +70,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <header>
-          <Link to="/">Sagacity</Link>
-          <Link to="/search-params">
-            <span arial-label="search" role="img">
-              Search
-            </span>
-          </Link>
-        </header>
+        <NavBar />
         <Provider value={this.state}>
           <Router>
             <Results path="/" />
