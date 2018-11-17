@@ -1,36 +1,44 @@
-import React, { Component } from "react";
-import pf from "petfinder-client";
-import { navigate } from "@reach/router";
-import Carousel from "./Carousel";
-import Modal from "./Modal";
+import React, { Component } from 'react'
+import pf from 'petfinder-client'
+import { navigate } from '@reach/router'
+import Carousel from './Carousel'
+import Modal from './Modal'
+import Loadable from 'react-loadable'
 
 const petfinder = pf({
   key: process.env.API_KEY,
   secret: process.env.API_SECRET
-});
+})
+
+const loading = () => <h1>Loading Content...</h1>
+
+const LoadableContent = Loadable({
+  loader: () => import('./AdoptModalContent'),
+  loading: loading
+})
 
 export default class Details extends Component {
   state = {
     loading: true,
     showModal: false
-  };
+  }
 
   toggleModal = () => {
     this.setState({
       showModal: !this.state.showModal
-    });
-  };
+    })
+  }
   componentDidMount() {
     petfinder.pet
       .get({
-        output: "full",
+        output: 'full',
         id: this.props.id
       })
       .then(data => {
-        const pet = data.petfinder.pet;
-        let breed;
+        const pet = data.petfinder.pet
+        let breed
         if (Array.isArray(pet.breeds.breed)) {
-          breed = pet.breeds.breed.join(", ");
+          breed = pet.breeds.breed.join(', ')
         }
         this.setState({
           name: pet.name,
@@ -40,16 +48,16 @@ export default class Details extends Component {
           media: pet.media,
           breed,
           loading: false
-        });
+        })
       })
       .catch(() => {
-        navigate("/");
-      });
+        navigate('/')
+      })
   }
 
   render() {
     if (this.state.loading) {
-      return <h1>Loading...</h1>;
+      return <h1>Loading...</h1>
     }
     const {
       name,
@@ -59,7 +67,7 @@ export default class Details extends Component {
       description,
       media,
       showModal
-    } = this.state;
+    } = this.state
 
     return (
       <div className="details">
@@ -73,16 +81,12 @@ export default class Details extends Component {
           <button onClick={this.toggleModal}>Show {name}</button>
           {showModal ? (
             <Modal>
-              <h1>Would you like to buy {name}</h1>
-              <div className="buttons">
-                <button onClick={this.toggleModal}>Yes</button>
-                <button onClick={this.toggleModal}>No</button>
-              </div>
+              <LoadableContent toggleModal={this.toggleModal} name={name} />
             </Modal>
           ) : null}
           <p>{description}</p>
         </div>
       </div>
-    );
+    )
   }
 }

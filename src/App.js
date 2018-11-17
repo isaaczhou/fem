@@ -1,59 +1,71 @@
-import React from 'react'
-import { render } from 'react-dom'
-import { Router } from '@reach/router'
-import pf from 'petfinder-client'
-import { Provider } from './SearchContext'
-import Results from './Results'
-import Loadable from 'react-loadable'
-import NavBar from './NavBar'
-import SearchParams from './SearchParams'
+import React from "react";
+import { render } from "react-dom";
+import { Router } from "@reach/router";
+import pf from "petfinder-client";
+import { Provider } from "./SearchContext";
+import Loadable from "react-loadable";
+import NavBar from "./NavBar";
 
 const petfinder = pf({
   key: process.env.API_KEY,
   secret: process.env.API_SECRET
-})
+});
 
 const LoadableDetails = Loadable({
-  loader: () => import('./Details'),
+  loader: () => import("./Details"),
   loading() {
-    return <h1>Loading Split out Code</h1>
+    return <h1>Loading Split out Code</h1>;
   }
-})
+});
+
+const LoadableResults = Loadable({
+  loader: () => import("./Results"),
+  loading() {
+    return <h1>Loading Split out Code</h1>;
+  }
+});
+
+const LoadableSearchParams = Loadable({
+  loader: () => import("./SearchParams"),
+  loading() {
+    return <h1>Loading Split out Code</h1>;
+  }
+});
 
 class App extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      location: 'New York, NY',
-      animal: '',
-      breed: '',
+      location: "New York, NY",
+      animal: "",
+      breed: "",
       breeds: [],
       handleAnimalChange: this.handleAnimalChange,
       handleBreedChange: this.handleBreedChange,
       handleLocationChange: this.handleLocationChange,
       getBreeds: this.getBreeds
-    }
+    };
   }
 
   handleLocationChange = event => {
     this.setState({
       location: event.target.value
-    })
-  }
+    });
+  };
   handleAnimalChange = event => {
     this.setState(
       {
         animal: event.target.value,
-        breed: ''
+        breed: ""
       },
       this.getBreeds
-    )
-  }
+    );
+  };
   handleBreedChange = event => {
     this.setState({
       breed: event.target.value
-    })
-  }
+    });
+  };
   getBreeds() {
     if (this.state.animal) {
       petfinder.breed.list({ animal: this.state.animal }).then(data => {
@@ -64,13 +76,13 @@ class App extends React.Component {
         ) {
           this.setState({
             breeds: data.petfinder.breeds.breed
-          })
+          });
         }
-      })
+      });
     } else {
       this.setState({
         breeds: []
-      })
+      });
     }
   }
 
@@ -80,14 +92,14 @@ class App extends React.Component {
         <NavBar />
         <Provider value={this.state}>
           <Router>
-            <Results path="/" />
+            <LoadableResults path="/" />
             <LoadableDetails path="/details/:id" />
-            <SearchParams path="/search-params" />
+            <LoadableSearchParams path="/search-params" />
           </Router>
         </Provider>
       </div>
-    )
+    );
   }
 }
 
-render(<App />, document.getElementById('root'))
+render(<App />, document.getElementById("root"));
